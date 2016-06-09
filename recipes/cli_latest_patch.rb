@@ -45,14 +45,14 @@ unless node[:oracle][:client][:latest_patch][:is_installed]
     unzip #{node[:oracle][:client][:install_dir]}/#{File.basename(node[:oracle][:client][:opatch_update_url])}
     EOH3
   end
-  
+
   # Making sure ocm.rsp response file is present.
   if !node[:oracle][:client][:response_file_url].empty?
     execute "fetch_response_file" do
       command "curl #{node[:oracle][:curl_options]} #{node[:oracle][:client][:response_file_url]}"
       user "oracli"
       group 'oracli'
-      cwd node[:oracle][:client][:install_dir]
+      cwd node[:oracle][:client][:ora_home]
     end
   else
     execute 'gen_response_file' do
@@ -73,10 +73,10 @@ unless node[:oracle][:client][:latest_patch][:is_installed]
     notifies :create, "ruby_block[set_latest_patch_install_flag]", :immediately
     notifies :create, "ruby_block[set_client_version_attr]", :immediately
   end
-  
+
   # Set the rdbms version attribute.
   include_recipe 'oracle::get_cli_version'
-    
+
   # Set flag indicating latest patch has been applied.
   ruby_block 'set_latest_patch_install_flag' do
     block do
