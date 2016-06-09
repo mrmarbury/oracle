@@ -46,7 +46,7 @@ ruby_block "print_empty_db_hash_warning" do
     Chef::Log.warn(":oracle[:rdbms][:dbs] is empty; no database will be created.")
   end
   action :create
-  only_if {node[:oracle][:rdbms][:dbs].empty?}
+  only_if { node[:oracle][:rdbms][:dbs].empty? }
 end
 
 node[:oracle][:rdbms][:dbs].each_key do |db|
@@ -69,6 +69,7 @@ node[:oracle][:rdbms][:dbs].each_key do |db|
       group "oinstall"
       environment (node[:oracle][:rdbms][:env])
       code "dbca -silent -createDatabase -emConfiguration DBEXPRESS -templateName #{node[:oracle][:rdbms][:db_create_template]} -gdbname #{db} -sid #{db} -sysPassword #{node[:oracle][:rdbms][:sys_pw]} -systemPassword #{node[:oracle][:rdbms][:system_pw]}"
+      timeout node[:oracle][:rdbms][:dbcreate_timeout]
     end
 
   else
@@ -78,6 +79,7 @@ node[:oracle][:rdbms][:dbs].each_key do |db|
       group "oinstall"
       environment (node[:oracle][:rdbms][:env])
       code "dbca -silent -createDatabase -templateName #{node[:oracle][:rdbms][:db_create_template]} -gdbname #{db} -sid #{db} -sysPassword #{node[:oracle][:rdbms][:sys_pw]} -systemPassword #{node[:oracle][:rdbms][:system_pw]}"
+      timeout node[:oracle][:rdbms][:dbcreate_timeout]
     end
 
     # Add to listener.ora a stanza describing the new DB.
@@ -99,7 +101,7 @@ node[:oracle][:rdbms][:dbs].each_key do |db|
       end
       action :create
     end
-    
+
     # Configure dbcontrol.
     if node[:oracle][:rdbms][:dbconsole][:emconfig]
       # Creating em.rsp file for dbcontrol.
@@ -143,7 +145,7 @@ node[:oracle][:rdbms][:dbs].each_key do |db|
         environment (node[:oracle][:rdbms][:env])
       end
     end
-    
+
     # Making sure shred is available
     yum_package "coreutils" do
       action :install

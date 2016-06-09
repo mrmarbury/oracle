@@ -135,3 +135,13 @@ default[:oracle][:rdbms][:dbconsole][:emconfig] = true
 default[:oracle][:rdbms][:dbconsole][:sysman_pw] = 'sysman_pw_goes_here'
 default[:oracle][:rdbms][:dbconsole][:notification_email] = 'foo@bar.inet'
 default[:oracle][:rdbms][:dbconsole][:outgoing_mail] = 'mailhost'
+
+## Has to be either true or false
+default[:oracle][:is_ee_options_selectable] = false
+## Which optional EE components to install. Comma separated string with extra components to install.
+## Can be any or all of the following: oracle.rdbms.partitioning:11.2.0.3.0, oracle.oraolap:11.2.0.3.0, oracle.rdbms.dm:11.2.0.3.0,
+## oracle.rdbms.dv:11.2.0.3.0, oracle.rdbms.lbac:11.2.0.3.0, oracle.rdbms.rat:11.2.0.3.0
+default[:oracle][:optional_components] = ''
+
+## DB creation takes an aweful long time. So we increse the timeout from 1h to 6h ... just to be on the safe side
+default[:oracle][:rdbms][:dbcreate_timeout] = 21600
